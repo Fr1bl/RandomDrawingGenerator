@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.student.cyber.app"},{"l":"ru.student.cyber.controller"},{"l":"ru.student.cyber.model"},{"l":"ru.student.cyber.service"},{"l":"ru.student.cyber.util"}];updateSearchResults();

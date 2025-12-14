@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.14'
+}
+
+group = 'ru.student.cyber'
+version = '1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass = 'ru.student.cyber.app.MainApp'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Log4j
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
+    testRuntimeOnly 'org.opentest4j:opentest4j:1.3.0'
+    testRuntimeOnly 'org.apiguardian:apiguardian-api:1.1.2'
+}
+
+// JavaFX через плагин
+javafx {
+    version = "20.0.2"
+    modules = [ "javafx.controls", "javafx.fxml" ]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Самодостаточный (uber) JAR
+task uberJar(type: Jar) {
+    archiveClassifier.set('all')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass.get()
+        )
+    }
+
+    from {
+        // Включаем все runtime зависимости (Log4j, JavaFX и т.д.)
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+// Сделать build зависимым от uberJar
+build.dependsOn uberJar
+
+// Тесты через JUnit 5
+test {
+    useJUnitPlatform()
+}
